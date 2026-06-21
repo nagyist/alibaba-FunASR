@@ -6970,7 +6970,7 @@
                 chars = string.ascii_letters + string.digits
                 key.append(&quot;rand_key_&quot; + &quot;&quot;.join(random.choice(chars) for _ in range(13)))
 
-</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/fun_asr_nano/model.py#L682" target="_blank" class="src-more">View full source →</a></details></div><div class="mblk"><code>.inference_llm(data_in, data_lengths, key, tokenizer, frontend, **kwargs)</code> <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/fun_asr_nano/model.py#L721" target="_blank" class="gh-link">L721</a><div class="mdoc"><p>Inference llm.</p>
+</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/fun_asr_nano/model.py#L682" target="_blank" class="src-more">View full source →</a></details></div><div class="mblk"><code>.inference_llm(data_in, data_lengths, key, tokenizer, frontend, **kwargs)</code> <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/fun_asr_nano/model.py#L798" target="_blank" class="gh-link">L798</a><div class="mdoc"><p>Inference llm.</p>
 <h4>Args:</h4>
 <ul>
 <li><code>data_in</code> — Input data (audio samples, file paths, or text).</li>
@@ -6999,18 +6999,18 @@
                 frontend: Audio frontend for feature extraction.
                 **kwargs: Additional keyword arguments.
             &quot;&quot;&quot;
+        # Only batch when CTC timestamps are not needed; the batched path does not
+        # produce ctc_timestamps, so fall back to the single-sample path when a CTC
+        # decoder is loaded (preserves timestamp behavior).
+        if len(data_in) &gt; 1 and self.ctc_decoder is None:
+            return self._inference_llm_batch(
+                data_in, data_lengths, key, tokenizer, frontend, **kwargs
+            )
         inputs_embeds, contents, batch, source_ids, meta_data = self.inference_prepare(
             data_in, data_lengths, key, tokenizer, frontend, **kwargs
         )
 
-        ctc_results = []
-        if self.ctc_decoder is not None:
-            encoder_out = meta_data[&quot;encoder_out&quot;]
-            encoder_out_lens = meta_data[&quot;encoder_out_lens&quot;]
-            decoder_out, decoder_out_lens = self.ctc_decoder(encoder_out, encoder_out_lens)
-            ctc_logits = self.ctc.log_softmax(decoder_out)
-
-</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/fun_asr_nano/model.py#L721" target="_blank" class="src-more">View full source →</a></details></div><div class="mblk"><code>.from_pretrained(model, **kwargs)</code> <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/fun_asr_nano/model.py#L860" target="_blank" class="gh-link">L860</a><div class="mdoc"><p>From pretrained.</p>
+</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/fun_asr_nano/model.py#L798" target="_blank" class="src-more">View full source →</a></details></div><div class="mblk"><code>.from_pretrained(model, **kwargs)</code> <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/fun_asr_nano/model.py#L944" target="_blank" class="gh-link">L944</a><div class="mdoc"><p>From pretrained.</p>
 <h4>Args:</h4>
 <ul>
 <li><code>model</code> — Model instance or model name.</li>
@@ -7325,7 +7325,7 @@
                 key.append(&quot;rand_key_&quot; + &quot;&quot;.join(random.choice(chars) for _ in range(13)))
 
 </code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/fun_asr_nano/model.py#L682" target="_blank" class="src-more">View full source on GitHub →</a></details></div>
-<div class="api-detail" id="e115"><span class="dtag badge-m">method</span><h2><code>FunASRNano.inference_llm(data_in, data_lengths, key, tokenizer, frontend, **kwargs)</code></h2><div class="dmod">funasr.models.fun_asr_nano.FunASRNano · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/fun_asr_nano/model.py#L721" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><p>Inference llm.</p>
+<div class="api-detail" id="e115"><span class="dtag badge-m">method</span><h2><code>FunASRNano.inference_llm(data_in, data_lengths, key, tokenizer, frontend, **kwargs)</code></h2><div class="dmod">funasr.models.fun_asr_nano.FunASRNano · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/fun_asr_nano/model.py#L798" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><p>Inference llm.</p>
 <h4>Args:</h4>
 <ul>
 <li><code>data_in</code> — Input data (audio samples, file paths, or text).</li>
@@ -7354,19 +7354,19 @@
                 frontend: Audio frontend for feature extraction.
                 **kwargs: Additional keyword arguments.
             &quot;&quot;&quot;
+        # Only batch when CTC timestamps are not needed; the batched path does not
+        # produce ctc_timestamps, so fall back to the single-sample path when a CTC
+        # decoder is loaded (preserves timestamp behavior).
+        if len(data_in) &gt; 1 and self.ctc_decoder is None:
+            return self._inference_llm_batch(
+                data_in, data_lengths, key, tokenizer, frontend, **kwargs
+            )
         inputs_embeds, contents, batch, source_ids, meta_data = self.inference_prepare(
             data_in, data_lengths, key, tokenizer, frontend, **kwargs
         )
 
-        ctc_results = []
-        if self.ctc_decoder is not None:
-            encoder_out = meta_data[&quot;encoder_out&quot;]
-            encoder_out_lens = meta_data[&quot;encoder_out_lens&quot;]
-            decoder_out, decoder_out_lens = self.ctc_decoder(encoder_out, encoder_out_lens)
-            ctc_logits = self.ctc.log_softmax(decoder_out)
-
-</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/fun_asr_nano/model.py#L721" target="_blank" class="src-more">View full source on GitHub →</a></details></div>
-<div class="api-detail" id="e116"><span class="dtag badge-m">method</span><h2><code>FunASRNano.from_pretrained(model, **kwargs)</code></h2><div class="dmod">funasr.models.fun_asr_nano.FunASRNano · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/fun_asr_nano/model.py#L860" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><p>From pretrained.</p>
+</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/fun_asr_nano/model.py#L798" target="_blank" class="src-more">View full source on GitHub →</a></details></div>
+<div class="api-detail" id="e116"><span class="dtag badge-m">method</span><h2><code>FunASRNano.from_pretrained(model, **kwargs)</code></h2><div class="dmod">funasr.models.fun_asr_nano.FunASRNano · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/fun_asr_nano/model.py#L944" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><p>From pretrained.</p>
 <h4>Args:</h4>
 <ul>
 <li><code>model</code> — Model instance or model name.</li>
@@ -11735,7 +11735,7 @@
         models = export_rebuild_model(model=self, **kwargs)
         return models
 </code></pre></details></div>
-<div class="api-detail" id="e187"><span class="dtag badge-c">class</span><h2>Qwen3ASR</h2><div class="dmod">funasr.models.qwen3_asr · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/qwen3_asr/model.py#L16" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><ul>
+<div class="api-detail" id="e187"><span class="dtag badge-c">class</span><h2>Qwen3ASR</h2><div class="dmod">funasr.models.qwen3_asr · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/qwen3_asr/model.py#L32" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><ul>
 <li><code>Qwen3</code> — ASR: Large Language Model based ASR supporting 52 languages.</li>
 </ul>
 <p>Wraps the qwen-asr package&#x27;s Qwen3ASRModel for use within FunASR&#x27;s AutoModel interface.</p>
@@ -11778,7 +11778,7 @@
         max_inference_batch_size = kwargs.get(&quot;max_inference_batch_size&quot;, 32)
         forced_aligner = kwargs.get(&quot;forced_aligner&quot;, None)
         forced_aligner_kwargs = kwargs.get(&quot;forced_aligner_kwargs&quot;, None)
-</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/qwen3_asr/model.py#L16" target="_blank" class="src-more">View full source on GitHub →</a></details><h3 class="mt">Methods</h3><div class="mblk"><code>.forward(**kwargs)</code> <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/qwen3_asr/model.py#L108" target="_blank" class="gh-link">L108</a><div class="mdoc"><p>Forward pass for training.</p>
+</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/qwen3_asr/model.py#L32" target="_blank" class="src-more">View full source on GitHub →</a></details><h3 class="mt">Methods</h3><div class="mblk"><code>.forward(**kwargs)</code> <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/qwen3_asr/model.py#L124" target="_blank" class="gh-link">L124</a><div class="mdoc"><p>Forward pass for training.</p>
 <h4>Args:</h4>
 <ul>
 <li><code>**kwargs</code> — Additional keyword arguments.</li>
@@ -11790,7 +11790,7 @@
                 **kwargs: Additional keyword arguments.
             &quot;&quot;&quot;
         raise NotImplementedError(&quot;Qwen3ASR only supports inference mode&quot;)
-</code></pre></details></div><div class="mblk"><code>.inference(data_in, data_lengths, key, tokenizer, frontend, **kwargs)</code> <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/qwen3_asr/model.py#L116" target="_blank" class="gh-link">L116</a><div class="mdoc"><p>Run Qwen3-ASR speech recognition.</p>
+</code></pre></details></div><div class="mblk"><code>.inference(data_in, data_lengths, key, tokenizer, frontend, **kwargs)</code> <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/qwen3_asr/model.py#L132" target="_blank" class="gh-link">L132</a><div class="mdoc"><p>Run Qwen3-ASR speech recognition.</p>
 <h4>Args:</h4>
 <ul>
 <li><code>data_in</code> — Audio input. Accepts:</li>
@@ -11845,8 +11845,8 @@
             tuple: (results, meta_data) where results is list of dicts:
                 - &quot;key&quot; (str): Sample ID
                 - &quot;text&quot; (str): Recognized text (with punctuation)
-</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/qwen3_asr/model.py#L116" target="_blank" class="src-more">View full source →</a></details></div></div>
-<div class="api-detail" id="e188"><span class="dtag badge-m">method</span><h2><code>Qwen3ASR.forward(**kwargs)</code></h2><div class="dmod">funasr.models.qwen3_asr.Qwen3ASR · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/qwen3_asr/model.py#L108" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><p>Forward pass for training.</p>
+</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/qwen3_asr/model.py#L132" target="_blank" class="src-more">View full source →</a></details></div></div>
+<div class="api-detail" id="e188"><span class="dtag badge-m">method</span><h2><code>Qwen3ASR.forward(**kwargs)</code></h2><div class="dmod">funasr.models.qwen3_asr.Qwen3ASR · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/qwen3_asr/model.py#L124" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><p>Forward pass for training.</p>
 <h4>Args:</h4>
 <ul>
 <li><code>**kwargs</code> — Additional keyword arguments.</li>
@@ -11859,7 +11859,7 @@
             &quot;&quot;&quot;
         raise NotImplementedError(&quot;Qwen3ASR only supports inference mode&quot;)
 </code></pre></details></div>
-<div class="api-detail" id="e189"><span class="dtag badge-m">method</span><h2><code>Qwen3ASR.inference(data_in, data_lengths, key, tokenizer, frontend, **kwargs)</code></h2><div class="dmod">funasr.models.qwen3_asr.Qwen3ASR · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/qwen3_asr/model.py#L116" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><p>Run Qwen3-ASR speech recognition.</p>
+<div class="api-detail" id="e189"><span class="dtag badge-m">method</span><h2><code>Qwen3ASR.inference(data_in, data_lengths, key, tokenizer, frontend, **kwargs)</code></h2><div class="dmod">funasr.models.qwen3_asr.Qwen3ASR · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/qwen3_asr/model.py#L132" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><p>Run Qwen3-ASR speech recognition.</p>
 <h4>Args:</h4>
 <ul>
 <li><code>data_in</code> — Audio input. Accepts:</li>
@@ -11914,7 +11914,7 @@
             tuple: (results, meta_data) where results is list of dicts:
                 - &quot;key&quot; (str): Sample ID
                 - &quot;text&quot; (str): Recognized text (with punctuation)
-</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/qwen3_asr/model.py#L116" target="_blank" class="src-more">View full source on GitHub →</a></details></div>
+</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/qwen3_asr/model.py#L132" target="_blank" class="src-more">View full source on GitHub →</a></details></div>
 <div class="api-detail" id="e190"><span class="dtag badge-c">class</span><h2>QwenAudioWarp</h2><div class="dmod">funasr.models.qwen_audio · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/models/qwen_audio/model.py#L22" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><ul>
 <li><code>Qwen</code> — Audio: Advancing Universal Audio Understanding via Unified Large-Scale Audio-Language Models</li>
 </ul>
@@ -20700,7 +20700,7 @@
                 ):
                     data_or_path_or_list_j = load_audio_text_image_video(
 </code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/utils/load_utils.py#L48" target="_blank" class="src-more">View full source on GitHub →</a></details></div>
-<div class="api-detail" id="e381"><span class="dtag badge-f">function</span><h2><code>load_bytes(input)</code></h2><div class="dmod">funasr.utils.load_utils · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/utils/load_utils.py#L194" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><p>Convert audio bytes to numpy array.</p>
+<div class="api-detail" id="e381"><span class="dtag badge-f">function</span><h2><code>load_bytes(input)</code></h2><div class="dmod">funasr.utils.load_utils · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/utils/load_utils.py#L207" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><p>Convert audio bytes to numpy array.</p>
 <h4>Args:</h4>
 <ul>
 <li><code>input (bytes)</code> — Raw audio bytes.</li>
@@ -20739,8 +20739,8 @@
     abs_max = 2 ** (i.bits - 1)
     offset = i.min + abs_max
     array = np.frombuffer((middle_data.astype(dtype) - offset) / abs_max, dtype=np.float32)
-</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/utils/load_utils.py#L194" target="_blank" class="src-more">View full source on GitHub →</a></details></div>
-<div class="api-detail" id="e382"><span class="dtag badge-f">function</span><h2><code>validate_frame_rate(input, fs)</code></h2><div class="dmod">funasr.utils.load_utils · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/utils/load_utils.py#L227" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><p>Validate frame rate.</p>
+</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/utils/load_utils.py#L207" target="_blank" class="src-more">View full source on GitHub →</a></details></div>
+<div class="api-detail" id="e382"><span class="dtag badge-f">function</span><h2><code>validate_frame_rate(input, fs)</code></h2><div class="dmod">funasr.utils.load_utils · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/utils/load_utils.py#L240" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><p>Validate frame rate.</p>
 <h4>Args:</h4>
 <ul>
 <li><code>input</code> — Input audio/text data.</li>
@@ -20776,8 +20776,8 @@
         output = BytesIO()
         audio.export(output, format=&quot;wav&quot;)
         output.seek(0)
-</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/utils/load_utils.py#L227" target="_blank" class="src-more">View full source on GitHub →</a></details></div>
-<div class="api-detail" id="e383"><span class="dtag badge-f">function</span><h2><code>extract_fbank(data, data_len, data_type, frontend, **kwargs)</code></h2><div class="dmod">funasr.utils.load_utils · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/utils/load_utils.py#L264" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><p>Extract filter-bank features from audio data.</p>
+</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/utils/load_utils.py#L240" target="_blank" class="src-more">View full source on GitHub →</a></details></div>
+<div class="api-detail" id="e383"><span class="dtag badge-f">function</span><h2><code>extract_fbank(data, data_len, data_type, frontend, **kwargs)</code></h2><div class="dmod">funasr.utils.load_utils · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/utils/load_utils.py#L277" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><p>Extract filter-bank features from audio data.</p>
 <h4>Args:</h4>
 <ul>
 <li><code>data</code> — Audio samples (list of numpy arrays or tensors).</li>
@@ -20819,7 +20819,7 @@
         for data_i in data:
             if isinstance(data_i, np.ndarray):
                 data_i = torch.from_numpy(data_i)
-</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/utils/load_utils.py#L264" target="_blank" class="src-more">View full source on GitHub →</a></details></div>
+</code></pre><a href="https://github.com/modelscope/FunASR/blob/main/funasr/utils/load_utils.py#L277" target="_blank" class="src-more">View full source on GitHub →</a></details></div>
 <div class="api-detail" id="e384"><span class="dtag badge-f">function</span><h2><code>statistic_model_parameters(model, prefix)</code></h2><div class="dmod">funasr.utils.misc · <a href="https://github.com/modelscope/FunASR/blob/main/funasr/utils/misc.py#L10" target="_blank">View on GitHub ↗</a></div><div class="ddoc"><p>Statistic model parameters.</p>
 <h4>Args:</h4>
 <ul>
